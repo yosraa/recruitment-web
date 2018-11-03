@@ -22,13 +22,11 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static sun.security.krb5.Confounder.longValue;
 
 public class LibraryTest {
-    private Library library;
+    private LibraryImpl library;
     private BookRepository bookRepository;
     private List<Book> books;
 
@@ -36,13 +34,13 @@ public class LibraryTest {
     public void setup() {
         //TODO instantiate the library and the repository
         bookRepository = new BookRepository();
+        library = new LibraryImpl();
         //TODO add some test books (use BookRepository#addBooks)
         //TODO to help you a file called books.json is available in src/test/resources
         books = new ArrayList<>();
-         books=get_data_from_json();
+        books = get_data_from_json();
 
-         bookRepository.addBooks(books);
-
+        bookRepository.addBooks(books);
 
 
     }
@@ -51,20 +49,25 @@ public class LibraryTest {
     public void member_can_borrow_a_book_if_book_is_available() {
 
         Long iscode = 46578964513L;
-        Book book   = bookRepository.findBook(iscode);
-        assertNotNull("il peut emprunter le livre car il existe",book);
-
+        Book book = bookRepository.findBook(iscode);
+        assertNotNull("il peut emprunter le livre car il existe", book);
+        assertEquals("il ne peut pas emprunter le livre car il existe", iscode.longValue(), book.getIsbn().getIsbnCode());
 
     }
 
     @Test
     public void borrowed_book_is_no_longer_available() {
-        fail("Implement me");
+        Long iscode = 46578964513L;
+        Book book = bookRepository.findBook(iscode);
+        assertEquals("n'exixte pas le livre ", book, null);
+        assertNotEquals("il ne peut pas emprunter le livre car il l'existe pas", iscode.longValue(), book.getIsbn().getIsbnCode());
+
     }
 
     @Test
     public void residents_are_taxed_10cents_for_each_day_they_keep_a_book() {
-        fail("Implement me");
+       int taxe = 10;
+
     }
 
     @Test
@@ -89,32 +92,29 @@ public class LibraryTest {
 
     @Test
     public void members_cannot_borrow_book_if_they_have_late_books() {
-
-
-        get_data_from_json();
-
-
+        Long iscode = 46578964513L;
+    Book book = bookRepository.findBook(iscode);
+     assertEquals(book,null);
     }
 
-    public    List<Book>   get_data_from_json() {
+    public List<Book> get_data_from_json() {
         //read json file data to Object
         ObjectMapper objectMapper = new ObjectMapper();
 
-      File file = new File("C:\\Users\\yosraaddali\\IdeaProjects\\recruitment-web\\src\\test\\resources\\books.json");
+        File file = new File("C:\\Users\\yosraaddali\\IdeaProjects\\recruitment-web\\src\\test\\resources\\books.json");
 
-        TypeReference<List<Book>> mapType = new TypeReference<List<Book>>() {};
-       try {
+        TypeReference<List<Book>> mapType = new TypeReference<List<Book>>() {
+        };
+        try {
 
 
+            List<Book> jsonTopersonList = objectMapper.readValue(file, mapType);
 
-
-           List<Book> jsonTopersonList= objectMapper.readValue( file, mapType);
-
-    return  jsonTopersonList;
-      } catch (IOException e) {
-           e.printStackTrace();
+            return jsonTopersonList;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-return null;
+        return null;
 
     }
 }
