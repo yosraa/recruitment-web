@@ -17,17 +17,22 @@ public class BookRepository {
     public void addBooks(List<Book> books){
         //TODO implement the missing feature
            books.stream()
-                .filter(book -> availableBooks.containsValue(book))
+                //.filter(book -> availableBooks.containsValue(book))
                 .forEach(book -> {
-                availableBooks.put(new ISBN(Long.numberOfTrailingZeros(3)),book);
+                availableBooks.put(book.isbn,book);
         });
 
     }
 
     public Book findBook(long isbnCode) {
         //TODO implement the missing feature
-        if (availableBooks.containsKey(isbnCode))
-            return availableBooks.get(isbnCode);
+
+        for (Map.Entry<ISBN, Book> entry : availableBooks.entrySet()) {
+            if (entry.getKey().isbnCode==isbnCode) {
+               return entry.getValue();
+            }
+        }
+
         return null;
     }
 
